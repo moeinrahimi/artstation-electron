@@ -1,0 +1,71 @@
+//TODO: select one and set as bg
+//TODO: select multiple and create slideshow
+//TODO: download full image size
+//TODO: random images slideshow
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+    <style>
+      .container{
+        display: grid;
+        grid-template-rows: 50px 1fr;
+        justify-items: center;
+      }
+      .results{
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        grid-gap:5px;
+      }
+    </style>
+    <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="search">
+        <input class="searchInput" type="text" placeholder="search" />
+      </div>
+      <div class="results">
+
+      </div>
+    </div>
+    <script src="assets/axios.js"></script>
+    <script>
+      const { ipcRenderer } = require('electron')
+      function debounce(func, wait, immediate) {
+	var timeout;
+	return function() {
+		var context = this, args = arguments;
+		var later = function() {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		var callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+};
+
+      let search = document.querySelector('.searchInput')
+      const searchWallpaper= debounce( function(e){
+        let query = e.target.value
+        console.log(query)
+        ipcRenderer.send('search', query)
+      },1000)
+      search.addEventListener('keyup',searchWallpaper)
+      ipcRenderer.on('search_result', (event, images) => {
+        let items = images.map(image=>{
+          return `<div class="item">
+            <img src="${image}" />
+            </div>`
+        }).join("")
+        console.log(items)
+        document.querySelector('.results').innerHTML = items
+      })
+
+    </script>
+  </body>
+</html>
