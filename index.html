@@ -3,86 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <title>unofficial Artstation GUI</title>
-    <style>
-      .container {
-        display: grid;
-        grid-template-rows: 50px 1fr;
-        justify-items: center;
-      }
-      .loading {
-        display: grid;
-        height: 100vh;
-        justify-items: center;
-        align-items: center;
-        visibility: hidden;
-      }
-      .show{
-        visibility: visible;
-        z-index: 1;
-      }
-      .search{
-        margin-bottom:20px;
-      }
-      .results {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        grid-gap: 5px;
-      }
-      .item {
-        overflow: hidden;
-        display: grid;
-        height: 200px;
-        grid-template-rows: 1;
-        grid-template-columns: 1;
-      }
-      .item img {
-        grid-column: 1 / -1;
-        grid-row: 1/-1;
-        width: 100%;
-        object-fit: cover;
-        height: 100%;
-      }
-      .overlay {
-        position: relative;
-        background: #ffc60030;
-        display: grid;
-        grid-column: 1 / -1;
-        grid-row: 1 / -1;
-        justify-items: center;
-        align-items: center;
-        transition: 0.2s;
-        transform: translateY(100%);
-      }
-      .item:hover .overlay {
-        transform: translateY(0);
-      }
-      .overlay button {
-        text-transform: uppercase;
-        padding: 5px;
-        background: none;
-        border: 3px solid white;
-        color: #fff;
-        background: rgba(0, 0, 0, 0.7);
-      }
-      .slideshow {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-        justify-items: center;
-        grid-gap: 20px;
-        object-fit: contain;
-        padding: 10px;
-        align-items: center;
-        margin-bottom: 20px;
-        /* visibility: hidden; */
-      }
-      .active {
-        /* visibility: visible; */
-        border: 3px solid #ccc;
-      }
-      .slideshow .item {
-        height: 100px;
-      }
-    </style>
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="stylesheet" href="assets/css/base.css" />
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
   </head>
   <body>
@@ -91,74 +13,25 @@
         <img src="assets/loading.svg" />
       </div>
       <div class="search">
-        <input class="searchInput" type="text" placeholder="search" />
+        <div class="form__group field">
+          <input
+            type="input"
+            class="form__field searchInput"
+            placeholder="Name"
+            name="name"
+            id="name"
+          />
+          <label for="name" class="form__label">Search Here</label>
+        </div>
+        <button class="openImages">Images Directory</button>
       </div>
       <div class="slideshow"></div>
       <div class="results"></div>
     </div>
+    <script src="helpers/script.js"></script>
     <script>
-      //TODO: select one and set as bg
-      //TODO: select multiple and create slideshow
-      //TODO: download full image size
-      //TODO: random images slideshow
-      const { ipcRenderer } = require('electron');
-      function debounce(func, wait, immediate) {
-        var timeout;
-        return function () {
-          var context = this,
-            args = arguments;
-          var later = function () {
-            timeout = null;
-            if (!immediate) func.apply(context, args);
-          };
-          var callNow = immediate && !timeout;
-          clearTimeout(timeout);
-          timeout = setTimeout(later, wait);
-          if (callNow) func.apply(context, args);
-        };
-      }
-
-      let search = document.querySelector('.searchInput');
-      const searchWallpaper = debounce(function (e) {
-        let query = e.target.value;
-        if(!query) return
-        console.log(query);
-        ipcRenderer.send('search', query);
-        document.querySelector(".loading").classList.add("show")
-      }, 1000);
-      search.addEventListener('keyup', searchWallpaper);
-      ipcRenderer.on('search_result', (event, images) => {
-        let items = images
-          .map((image) => {
-            return `<div class="item" data-artwork="${image.artwork}">
-            <div class="overlay">
-              <button>set</button>
-              </div>
-            <img src="${image.thumbnail}" />
-            </div>`;
-          })
-          .join('');
-          document.querySelector(".loading").classList.remove("show")
-        document.querySelector('.results').innerHTML = items;
-        function getWallpaper(e) {
-          ipcRenderer.send('getArtwork', e.currentTarget.dataset.artwork);
-          document.querySelector(".loading").classList.add("show")
-          ipcRenderer.on('artwork_result', (event, artworks) => {
-            document.querySelector(".loading").classList.remove("show")
-            let slideshowHTML = artworks
-              .map((artwork) => {
-                return `
-              <div class="item">
-                <img src="${artwork}"/>
-                </div>`;
-              })
-              .join('');
-            document.querySelector('.slideshow').classList.add('active');
-            document.querySelector('.slideshow').innerHTML = slideshowHTML;
-          });
-        }
-        let items1 = document.querySelectorAll('.item');
-        items1.forEach((item) => item.addEventListener('click', getWallpaper));
+      document.querySelector('.openImages').addEventListener('click', function (e) {
+        shell.openPath('images');
       });
     </script>
   </body>
