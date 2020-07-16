@@ -1,71 +1,165 @@
-//TODO: select one and set as bg
-//TODO: select multiple and create slideshow
-//TODO: download full image size
-//TODO: random images slideshow
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
-    <title>Hello World!</title>
+    <meta charset="UTF-8" />
+    <title>unofficial Artstation GUI</title>
     <style>
-      .container{
+      .container {
         display: grid;
         grid-template-rows: 50px 1fr;
         justify-items: center;
       }
-      .results{
+      .loading {
         display: grid;
-        grid-template-columns: repeat(3,1fr);
-        grid-gap:5px;
+        height: 100vh;
+        justify-items: center;
+        align-items: center;
+        visibility: hidden;
+      }
+      .show{
+        visibility: visible;
+        z-index: 1;
+      }
+      .search{
+        margin-bottom:20px;
+      }
+      .results {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-gap: 5px;
+      }
+      .item {
+        overflow: hidden;
+        display: grid;
+        height: 200px;
+        grid-template-rows: 1;
+        grid-template-columns: 1;
+      }
+      .item img {
+        grid-column: 1 / -1;
+        grid-row: 1/-1;
+        width: 100%;
+        object-fit: cover;
+        height: 100%;
+      }
+      .overlay {
+        position: relative;
+        background: #ffc60030;
+        display: grid;
+        grid-column: 1 / -1;
+        grid-row: 1 / -1;
+        justify-items: center;
+        align-items: center;
+        transition: 0.2s;
+        transform: translateY(100%);
+      }
+      .item:hover .overlay {
+        transform: translateY(0);
+      }
+      .overlay button {
+        text-transform: uppercase;
+        padding: 5px;
+        background: none;
+        border: 3px solid white;
+        color: #fff;
+        background: rgba(0, 0, 0, 0.7);
+      }
+      .slideshow {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        justify-items: center;
+        grid-gap: 20px;
+        object-fit: contain;
+        padding: 10px;
+        align-items: center;
+        margin-bottom: 20px;
+        /* visibility: hidden; */
+      }
+      .active {
+        /* visibility: visible; */
+        border: 3px solid #ccc;
+      }
+      .slideshow .item {
+        height: 100px;
       }
     </style>
-    <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
   </head>
   <body>
     <div class="container">
+      <div class="loading">
+        <img src="assets/loading.svg" />
+      </div>
       <div class="search">
         <input class="searchInput" type="text" placeholder="search" />
       </div>
-      <div class="results">
-
-      </div>
+      <div class="slideshow"></div>
+      <div class="results"></div>
     </div>
-    <script src="assets/axios.js"></script>
     <script>
-      const { ipcRenderer } = require('electron')
+      //TODO: select one and set as bg
+      //TODO: select multiple and create slideshow
+      //TODO: download full image size
+      //TODO: random images slideshow
+      const { ipcRenderer } = require('electron');
       function debounce(func, wait, immediate) {
-	var timeout;
-	return function() {
-		var context = this, args = arguments;
-		var later = function() {
-			timeout = null;
-			if (!immediate) func.apply(context, args);
-		};
-		var callNow = immediate && !timeout;
-		clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
-		if (callNow) func.apply(context, args);
-	};
-};
+        var timeout;
+        return function () {
+          var context = this,
+            args = arguments;
+          var later = function () {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+          };
+          var callNow = immediate && !timeout;
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+          if (callNow) func.apply(context, args);
+        };
+      }
 
-      let search = document.querySelector('.searchInput')
-      const searchWallpaper= debounce( function(e){
-        let query = e.target.value
-        console.log(query)
-        ipcRenderer.send('search', query)
-      },1000)
-      search.addEventListener('keyup',searchWallpaper)
+      let search = document.querySelector('.searchInput');
+      const searchWallpaper = debounce(function (e) {
+        let query = e.target.value;
+        if(!query) return
+        console.log(query);
+        ipcRenderer.send('search', query);
+        document.querySelector(".loading").classList.add("show")
+      }, 1000);
+      search.addEventListener('keyup', searchWallpaper);
       ipcRenderer.on('search_result', (event, images) => {
-        let items = images.map(image=>{
-          return `<div class="item">
-            <img src="${image}" />
-            </div>`
-        }).join("")
-        console.log(items)
-        document.querySelector('.results').innerHTML = items
-      })
-
+        let items = images
+          .map((image) => {
+            return `<div class="item" data-artwork="${image.artwork}">
+            <div class="overlay">
+              <button>set</button>
+              </div>
+            <img src="${image.thumbnail}" />
+            </div>`;
+          })
+          .join('');
+          document.querySelector(".loading").classList.remove("show")
+        document.querySelector('.results').innerHTML = items;
+        function getWallpaper(e) {
+          ipcRenderer.send('getArtwork', e.currentTarget.dataset.artwork);
+          document.querySelector(".loading").classList.add("show")
+          ipcRenderer.on('artwork_result', (event, artworks) => {
+            document.querySelector(".loading").classList.remove("show")
+            let slideshowHTML = artworks
+              .map((artwork) => {
+                return `
+              <div class="item">
+                <img src="${artwork}"/>
+                </div>`;
+              })
+              .join('');
+            document.querySelector('.slideshow').classList.add('active');
+            document.querySelector('.slideshow').innerHTML = slideshowHTML;
+          });
+        }
+        let items1 = document.querySelectorAll('.item');
+        items1.forEach((item) => item.addEventListener('click', getWallpaper));
+      });
     </script>
   </body>
 </html>
