@@ -2,6 +2,8 @@
 //TODO: select multiple and create slideshow
 //TODO: download full image size
 //TODO: random images slideshow
+//TODO: pick timer to change image
+//TODO: select scale of image
 const { ipcRenderer, shell } = require('electron');
 function debounce(func, wait, immediate) {
   var timeout;

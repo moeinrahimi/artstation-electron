@@ -9,10 +9,12 @@ exports.search = async (q) => {
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'
     );
     await page.setRequestInterception(true);
-    // we don't want to pressure on our bandwidth do we ? :)
     page.on('request', (request) => {
-      if (request.resourceType() === 'image') request.abort();
-      else request.continue();
+      if (['image', 'stylesheet', 'font','other'].includes(request.resourceType())) {
+        request.abort();
+    } else {
+        request.continue();
+    }
     });
 
     let baseURL = `https://www.artstation.com/search?q=${encodeURI(q)}&sort_by=relevance`;
@@ -44,8 +46,12 @@ exports.getArtwork = async (url) => {
     );
     await page.setRequestInterception(true);
     page.on('request', (request) => {
-      if (request.resourceType() === 'image') request.abort();
-      else request.continue();
+      if (['image', 'stylesheet', 'font','other'].includes(request.resourceType())) {
+        request.abort();
+    } else {
+        request.continue();
+    }
+
     });
 
     await page.goto(url);
