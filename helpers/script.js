@@ -31,6 +31,8 @@ const searchWallpaper = debounce(function (e) {
 }, 1000);
 search.addEventListener('keyup', searchWallpaper);
 ipcRenderer.on('search_result', (event, images) => {
+  console.log("images", images)
+  if(!images || images.length == 0) return 
   let items = images
     .map((image) => {
       return `<div class="item" >

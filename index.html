@@ -30,8 +30,17 @@
     </div>
     <script src="helpers/script.js"></script>
     <script>
+      let dirPath= ''
+      ipcRenderer.send('is_packed');
+      ipcRenderer.on('is_packed_response', (event, isPackedRes) => {
+        if(isPackedRes)
+          dirPath = process.resourcesPath
+
+      })
+
+      let path = require('path')
       document.querySelector('.openImages').addEventListener('click', function (e) {
-        shell.openPath('images');
+        shell.openPath(path.resolve(dirPath,'images'));
       });
     </script>
   </body>

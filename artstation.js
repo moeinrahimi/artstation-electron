@@ -1,9 +1,17 @@
 const puppeteer = require('puppeteer');
+function getChromiumExecPath() {
+  return puppeteer.executablePath().replace('app.asar', 'app.asar.unpacked');
+}
 
+ function createBrowser(options = {}) {
+  return puppeteer.launch({
+      ...options,
+      executablePath: getChromiumExecPath()
+  });
+}
 exports.search = async (q) => {
   console.log(q, 'query');
-  try {
-    const browser = await puppeteer.launch();
+    const browser = await createBrowser()
     const page = await browser.newPage();
     await page.setUserAgent(
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'
@@ -32,14 +40,11 @@ exports.search = async (q) => {
     });
     browser.close();
     return items;
-  } catch (e) {
-    console.log(e, 'got an error !');
-  }
+
 };
 
 exports.getArtwork = async (url) => {
-  try {
-    const browser = await puppeteer.launch();
+    const browser = await createBrowser()
     const page = await browser.newPage();
     await page.setUserAgent(
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'
@@ -68,7 +73,5 @@ exports.getArtwork = async (url) => {
     browser.close();
 
     return items;
-  } catch (e) {
-    console.log(e, 'got an error !');
-  }
+
 };

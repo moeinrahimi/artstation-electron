@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path');
 var request = require('request');
 const wallpaper = require('wallpaper');
+const { app } = require('electron');
+
 let iterateNumber = 0;
 let timer;
 
@@ -11,16 +13,16 @@ async function startWallpaperSlider(images = []) {
     return downloadImage(artwork);
   });
   let result = await Promise.all(downloads);
-  console.log(result);
+  // console.log(result);
   if (timer) clearInterval(timer);
   iterateNumber = 0;
-  timer = setInterval(setWallpaper, 3000, result);
+  timer = setInterval(setWallpaper, 30000, result);
 }
 
 function setWallpaper(files) {
   let limit = files.length;
   if (iterateNumber == limit) iterateNumber = 0;
-  wallpaper.set(files[iterateNumber]);
+  wallpaper.set(files[iterateNumber],{scale:'fit'});
   iterateNumber += 1;
 }
 
@@ -35,8 +37,10 @@ function download(uri, filename, callback) {
 async function downloadImage(url) {
   let random = Math.floor(Math.random(10000) * 1000);
   let imageName = `${random}.jpg`;
+  let basePath = path.dirname(require.main.filename || process.mainModule.filename )
+  if(app.isPackaged) basePath = process.resourcesPath
   const fpath = path.resolve(
-    path.dirname(require.main.filename || process.mainModule.filename),
+    basePath,
     'images',
     imageName
   );

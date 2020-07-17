@@ -1,19 +1,51 @@
 {
-  "name": "wallpaper-finder",
-  "version": "1.0.0",
+  "name": "artstation-electron",
+  "version": "0.0.1",
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-builder build  --win --publish never",
+    "deploy": "electron-builder build  --win  --publish always"
+  },
+  "build": {
+    "extraResources": [
+      "./images/**"
+    ],
+    "asar": true,
+    "asarUnpack": "node_modules/puppeteer/.local-chromium/**/*",
+
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "moeinrahimi",
+        "repo": "artstation-electron"
+      }
+    ],
+    "appId": "com.artstation-electron.app",
+    "linux": {
+      "category": "Utility",
+      "description": "set your desktop background through artstation images",
+      "target": [
+        "AppImage"
+      ]
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.png"
+    }
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^9.1.0"
+    "electron": "^9.1.0",
+    "electron-builder": "^22.2.0"
   },
   "dependencies": {
     "axios": "^0.19.2",
     "puppeteer": "^5.0.0",
+    "puppeteer-core": "^5.1.0",
+    "puppeteer-in-electron": "^3.0.3",
     "request": "^2.88.2",
     "wallpaper": "^4.4.1"
   }
