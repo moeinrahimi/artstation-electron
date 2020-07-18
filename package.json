@@ -5,8 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder build  --win --publish never",
-    "deploy": "electron-builder build  --win  --publish always"
+    "build": "electron-builder build  --mac --publish never",
+    "deploy": "electron-builder build  --mac   --publish always"
   },
   "build": {
     "extraResources": [
@@ -14,7 +14,6 @@
     ],
     "asar": true,
     "asarUnpack": "node_modules/puppeteer/.local-chromium/**/*",
-
     "publish": [
       {
         "provider": "github",
@@ -33,6 +32,20 @@
     "win": {
       "target": "nsis",
       "icon": "assets/icon.png"
+    },
+    "dmg": {
+      "contents": [
+        {
+          "x": 110,
+          "y": 150
+        },
+        {
+          "x": 240,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
     }
   },
   "author": "",
