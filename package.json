@@ -5,8 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder build  --mac --publish never",
-    "deploy": "electron-builder build  --mac   --publish always"
+    "build": "electron-builder build  --win --publish never",
+    "deploy": "electron-builder build  --win   --publish always"
   },
   "build": {
     "extraResources": [

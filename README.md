@@ -3,7 +3,11 @@
 set desktop image through artstation images
 ## Installation
 
-download from release page.
+download from release page, right now images change each 30 seconds.
+
+![artstation-GUI](https://media.giphy.com/media/ZZINboaHFD5YrL0t6d/giphy.gif)
+
+
 
 ## Development
 ``` bash
