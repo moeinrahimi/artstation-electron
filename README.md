@@ -3,7 +3,7 @@
 set desktop image through artstation images
 ## Installation
 
-download from ![release page](https://github.com/moeinrahimi/artstation-electron/releases/tag/0.0.1), right now images change each 30 seconds.
+download from [release page](https://github.com/moeinrahimi/artstation-electron/releases/tag/0.0.1), right now images change each 30 seconds.
 
 ![artstation-GUI](https://media.giphy.com/media/ZZINboaHFD5YrL0t6d/giphy.gif)
 
