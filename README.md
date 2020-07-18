@@ -23,3 +23,4 @@ Please make sure to update tests as appropriate.
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
 all artworks belongs to their respective artists at artstation.com
+artstation is a registered brand of artstation.com and resources belongs to their respective owner at artstation or artists creating artworks
