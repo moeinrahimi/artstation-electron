@@ -55,7 +55,7 @@
     "electron-builder": "^22.2.0"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "puppeteer": "^5.0.0",
     "puppeteer-core": "^5.1.0",
     "puppeteer-in-electron": "^3.0.3",
